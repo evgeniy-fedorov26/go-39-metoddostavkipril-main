@@ -1,8 +1,10 @@
 PUBLIC_REGISTRY_HOST=docker.io
-PUBLIC_REGISTRY_OWNER=scherkesov1006
+PUBLIC_REGISTRY_OWNER=novermore26
 PUBLIC_REGISTRY_APP_NAME=module-39
 
 CI_COMMIT_REF_NAME=latest
+
+IMAGE_NAME=${PUBLIC_REGISTRY_HOST}/${PUBLIC_REGISTRY_OWNER}/${PUBLIC_REGISTRY_APP_NAME}:${CI_COMMIT_REF_NAME}
 
 all: deps build test
 
@@ -11,14 +13,15 @@ deps:
 	@echo "Dependencies installed successfully"
 
 build:
-	go build ./
+	@go build ./
 
 test:
-	go test -v ./...
+	@go test -v ./...
 
 lint:
-	golangci-lint run ./...
+	@golangci-lint run ./...
 
 image:
-	docker build -t ${PUBLIC_REGISTRY_HOST}/${PUBLIC_REGISTRY_OWNER}/${PUBLIC_REGISTRY_APP_NAME}:${CI_COMMIT_REF_NAME} ./
-	docker push ${PUBLIC_REGISTRY_HOST}/${PUBLIC_REGISTRY_OWNER}/${PUBLIC_REGISTRY_APP_NAME}:${CI_COMMIT_REF_NAME}
+	@docker build -t ${IMAGE_NAME} ./
+	@docker push ${IMAGE_NAME}
+	@echo "New ${PUBLIC_REGISTRY_HOST}/${PUBLIC_REGISTRY_OWNER}/${PUBLIC_REGISTRY_APP_NAME} image ready! Version ${CI_COMMIT_REF_NAME}!"
