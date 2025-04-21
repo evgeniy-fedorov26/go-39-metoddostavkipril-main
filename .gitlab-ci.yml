@@ -14,16 +14,18 @@ build_image:
   services:
     - docker:dind
   script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$DOCKER_HUB_PASSWORD" $PUBLIC_REGISTRY_HOST
+    - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin $PUBLIC_REGISTRY_HOST
     - docker build -t $IMAGE_NAME:$CI_COMMIT_REF_NAME .
     - docker push $IMAGE_NAME:$CI_COMMIT_REF_NAME
+    - echo "New $IMAGE_NAME image ready! Version $CI_COMMIT_REF_NAME!"
 
-build_image_latest:
+publish_latest:
   stage: publish
   image: docker:latest
   services:
     - docker:dind
   script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$DOCKER_HUB_PASSWORD" $PUBLIC_REGISTRY_HOST
+    - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin $PUBLIC_REGISTRY_HOST
     - docker build -t $IMAGE_NAME:latest .
     - docker push $IMAGE_NAME:latest
+    - echo "New $IMAGE_NAME image ready! Version latest!"
